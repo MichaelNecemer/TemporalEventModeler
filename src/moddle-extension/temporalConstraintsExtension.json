@@ -1,0 +1,107 @@
+{
+    "name": "temporalConstraints",
+    "uri": "http://TemporalData",
+    "prefix": "tc",
+    "xml": {
+      "tagAlias": "lowerCase"
+    },
+    "types": [
+        {
+			"name": "TemporalEvent",
+			"extends": [				
+			"bpmn:Event"
+			],
+			"properties": [
+				{
+					"name": "isTemporalEvent",
+					"isAttr": true,
+					"type": "Boolean"
+				}		
+			]
+		},
+		
+		{
+			"name": "TemporalConstraint",
+			"extends": [
+				"bpmn:Association"
+			], 
+			"properties": [
+				{
+					"name": "label",
+					"isAttr": true,
+					"type": "String"
+				},
+
+				{
+					"name": "constraintType",
+					"isAttr": true,
+					"type": "String"
+				},
+
+                {
+                    "name": "holder",
+                    "isAttr": true,
+                    "type": "String"
+                },
+				{
+					"name": "contingency",
+					"isAttr": true,
+					"type": "String"
+				}, 
+				{
+					"name": "isSatisfiable",
+					"isAttr": true,
+					"type": "Boolean"
+				}			
+			]
+		}, 
+		{
+			"name": "DurationConstraint",
+			"extends": [
+				"TemporalConstraint"
+			],
+			"properties": [
+				{
+					"name": "minDuration",
+					"isAttr": true,
+					"type": "Integer"
+				},
+                {
+					"name": "maxDuration",
+					"isAttr": true,
+					"type": "Integer"
+				}
+			]
+		}, 
+
+		{
+			"name": "UpperboundConstraint",
+			"extends": [
+				"TemporalConstraint"
+			], 
+			"properties": [
+				{
+					"name": "upperboundDuration",
+					"isAttr": true,
+					"type": "Integer"
+				}
+			]
+		},
+
+		{
+			"name": "LowerboundConstraint",
+			"extends": [
+				"TemporalConstraint"
+			], 
+			"properties": [
+				{
+					"name": "lowerboundDuration",
+					"isAttr": true,
+					"type": "Integer"
+				}
+			]
+		}	
+    ],
+    "emumerations": [],
+    "associations": []
+  }
