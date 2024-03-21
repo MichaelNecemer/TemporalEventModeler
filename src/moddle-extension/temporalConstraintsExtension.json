@@ -13,6 +13,11 @@
 			],
 			"properties": [
 				{
+					"name": "controller",
+					"isAttr": true,
+					"type": "String"
+				}, 
+				{
 					"name": "isTemporalEvent",
 					"isAttr": true,
 					"type": "Boolean"
@@ -37,9 +42,8 @@
 					"isAttr": true,
 					"type": "String"
 				},
-
                 {
-                    "name": "holder",
+                    "name": "controller",
                     "isAttr": true,
                     "type": "String"
                 },

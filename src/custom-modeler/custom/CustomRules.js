@@ -45,6 +45,7 @@ CustomRules.prototype.init = function () {
 
   function canConnect(source, target, connectionType) {
     if (!isElementTemporalEvent(source) && !isElementTemporalEvent(target)) {
+      // let the default rule provider handle it
       return;
     }
 

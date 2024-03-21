@@ -21,6 +21,7 @@ import {
   isCustom,
   isElementTemporalEvent,
   isAssociationTemporalConstraint,
+  isTemporalConstraint,
 } from "../../utils/helper";
 import { getBusinessObject, is, isAny } from "bpmn-js/lib/util/ModelUtil";
 
@@ -91,14 +92,27 @@ export default function CustomRenderer(
     // calculate angle
     const angle = Math.atan((second.y - first.y) / (second.x - first.x));
 
+    const midPoint = getWaypointsMid(waypoints);
+    let addLabelAbove = true;
+    if (midPoint.y > waypoints[0].y) {
+      addLabelAbove = false;
+    }
+
     let x = position.x,
       y = position.y;
 
     if (Math.abs(angle) < Math.PI / 2) {
-      if (angle <= 0.035) {
+      if (angle == 0) {
         x -= labelTextLength / 2;
+        addLabelAbove ? (y -= OFFSET_LABEL_Y) : (y += OFFSET_LABEL_Y + 10);
+      } else {
+        if(angle<0){
+          x += OFFSET_LABEL_X;  
+          y += OFFSET_LABEL_Y; 
+        } else {
+          x += OFFSET_LABEL_X;  
+        } 
       }
-      y -= OFFSET_LABEL_Y;
     } else {
       x += OFFSET_LABEL_X;
     }
@@ -211,7 +225,7 @@ export default function CustomRenderer(
     });
   }
 
-  this.drawTemporalEvent = function (p, element) {
+/*   this.drawTemporalEvent = function (p, element) {
     const circle = this.bpmnRenderer.drawShape(p, element);
 
     const text = svgCreate("text");
@@ -227,7 +241,7 @@ export default function CustomRenderer(
 
     return circle;
   };
-
+ */
   this.drawLabelForConstraint = function (p, element, color) {
     return renderExternalLabel(p, element, color);
   };
@@ -311,20 +325,9 @@ CustomRenderer.$inject = [
 ];
 
 CustomRenderer.prototype.canRender = function (element) {
-  return isCustom(element) && !element.labelTarget;
+  return isTemporalConstraint(element) && !element.labelTarget;
 };
 
-CustomRenderer.prototype.drawShape = function (p, element) {
-  const isTempEvent = isElementTemporalEvent(element);
-
-  if (isTempEvent) {
-    return this.drawTemporalEvent(p, element);
-  }
-};
-
-CustomRenderer.prototype.getShapePath = function (shape) {
-  return this.bpmnRenderer.getShapePath(shape);
-};
 
 CustomRenderer.prototype.drawConnection = function (p, element) {
   const businessObject = getBusinessObject(element);

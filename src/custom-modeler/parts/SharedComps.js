@@ -13,7 +13,8 @@ import { isNumber } from "min-dash";
 import { getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
 import { generateConstraintLabel, generateLabel } from "../../utils/helper";
 
-export function HolderComponent(props) {
+
+export function ControllerOfTempEventComponent(props) {
   const { element, id } = props;
   const { businessObject } = element;
 
@@ -21,28 +22,61 @@ export function HolderComponent(props) {
   const translate = useService("translate");
   const debounce = useService("debounceInput");
 
-  const getHolder = () => {
-    return element.businessObject.holder || "";
+  const getController = () => {
+    return element.businessObject.controller || "";
   };
 
-  const setHolder = (newHolder) => {
+  const setController = (newController) => {
     modeling.updateProperties(element, {
-      holder: newHolder,
+      controller: newController,
     });
-    const updatedLabel = generateLabel(element);
-    modeling.updateProperties(element, {
-      label: updatedLabel,
-    });
-    return newHolder;
+    // update constraints labels 
+
+    return newController;
   };
 
   return html`<${TextFieldEntry}
     id=${id}
     element=${element}
-    description=${translate("Change the holder")}
-    label=${translate("Holder")}
-    getValue=${getHolder}
-    setValue=${setHolder}
+    description=${translate("Change the controller")}
+    label=${translate("Controller")}
+    getValue=${getController}
+    setValue=${setController}
+    debounce=${debounce}
+  />`;
+}
+
+
+export function ControllerComponent(props) {
+  const { element, id } = props;
+  const { businessObject } = element;
+
+  const modeling = useService("modeling");
+  const translate = useService("translate");
+  const debounce = useService("debounceInput");
+
+  const getController = () => {
+    return element.businessObject.controller || "";
+  };
+
+  const setController = (newController) => {
+    modeling.updateProperties(element, {
+      controller: newController,
+    });
+    const updatedLabel = generateLabel(element);
+    modeling.updateProperties(element, {
+      label: updatedLabel,
+    });
+    return newController;
+  };
+
+  return html`<${TextFieldEntry}
+    id=${id}
+    element=${element}
+    description=${translate("Change the controller")}
+    label=${translate("Controller")}
+    getValue=${getController}
+    setValue=${setController}
     debounce=${debounce}
   />`;
 }

@@ -1,13 +1,13 @@
 import {isNumberFieldEntryEdited, isTextFieldEntryEdited, isSelectEntryEdited } from '@bpmn-io/properties-panel';
-import { HolderComponent, ContingencyComponent, DurationComponent, MinDurationComponent, MaxDurationComponent, SatisfiabilityComponent} from './SharedComps';
+import { ContingencyComponent, DurationComponent, MinDurationComponent, MaxDurationComponent, SatisfiabilityComponent, ControllerComponent} from './SharedComps';
 
 export default function (element) {
 
   return [
     {
-      id: 'holder',
+      id: 'controller',
       element,
-      component: HolderComponent,
+      component: ControllerComponent,
       isEdited: isTextFieldEntryEdited
     }, 
     {

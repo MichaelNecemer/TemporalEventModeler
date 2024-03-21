@@ -16,7 +16,13 @@ export default function CustomModeler(options) {
   this._customElements = [];
 }
 
+
+
 inherits(CustomModeler, Modeler);
+
+CustomModeler.prototype.createDiagram = function(initialDiagram) {
+  return this.importXML(initialDiagram)
+}
 
 CustomModeler.prototype._modules = [].concat(
   CustomModeler.prototype._modules,

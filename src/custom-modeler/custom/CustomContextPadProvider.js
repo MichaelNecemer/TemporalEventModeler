@@ -77,11 +77,11 @@ export default function CustomContextPadProvider(bpmnFactory, injector, connect,
 
   function appendTemporalEvent(event, element) {
       if (autoPlace) {
-        const businessObject = bpmnFactory.create('bpmn:IntermediateThrowEvent');
+        const businessObject = bpmnFactory.create('bpmn:IntermediateCatchEvent');
 
         businessObject.isTemporalEvent = true;
 
-        const shape = elementFactory.createShape({ type: 'bpmn:IntermediateThrowEvent', businessObject: businessObject });
+        const shape = elementFactory.createShape({ type: 'bpmn:IntermediateCatchEvent', businessObject: businessObject });
 
         autoPlace.append(element, shape);
       } else {
@@ -91,11 +91,11 @@ export default function CustomContextPadProvider(bpmnFactory, injector, connect,
     }
 
     function appendTemporalEventStart(event) {
-      const businessObject = bpmnFactory.create('bpmn:IntermediateThrowEvent');
+      const businessObject = bpmnFactory.create('bpmn:IntermediateCatchEvent');
 
       businessObject.isTemporalEvent = true;
 
-      const shape = elementFactory.createShape({ type: 'bpmn:IntermediateThrowEvent', businessObject: businessObject});
+      const shape = elementFactory.createShape({ type: 'bpmn:IntermediateCatchEvent', businessObject: businessObject});
 
       create.start(event, shape, element);
     }
@@ -103,7 +103,7 @@ export default function CustomContextPadProvider(bpmnFactory, injector, connect,
 
     if (isElementTemporalEvent(element)) {
         assign(actions, {
-          'connect.seqFlow': {
+        /*   'connect.seqFlow': {
             group: 'connect',
             className: 'bpmn-icon-connection',
             title: translate('Connect using SequenceFlow'),
@@ -111,7 +111,7 @@ export default function CustomContextPadProvider(bpmnFactory, injector, connect,
               click: startConnectWithType('bpmn:SequenceFlow'),
               dragstart: startConnectWithType('bpmn:SequenceFlow'),
             }
-          }, 
+          },  */
           'connect.duration-constraint': {
             group: 'custom-1',
             className: 'bpmn-icon-connection',
@@ -143,7 +143,7 @@ export default function CustomContextPadProvider(bpmnFactory, injector, connect,
        });
      }
 
-     if(is(element, ['bpmn:FlowNode']) && !element.labelTarget){
+   /*   if(is(element, ['bpmn:FlowNode']) && !element.labelTarget){
      assign(actions, {
       'append.temporal-event': {
         group: 'custom-2',
@@ -156,7 +156,7 @@ export default function CustomContextPadProvider(bpmnFactory, injector, connect,
      }
 
      })
-    }
+    } */
     return actions;
   };
 }

@@ -33,22 +33,22 @@ export default class CustomPaletteProvider {
       translate
     } = this;
 
-    function createTemporalEvent(){
+/*     function createTemporalEvent(){
       return function(event) { 
 
         // business object is the type that will be displayed in the xml for the temporal event
-        const businessObject = bpmnFactory.create('bpmn:IntermediateThrowEvent');
+        const businessObject = bpmnFactory.create('bpmn:IntermediateCatchEvent');
         businessObject.isTemporalEvent = true;
 
         // shape is the graphics that will be displayed for the temporal event
         const shape = elementFactory.createShape({
-          type: 'bpmn:IntermediateThrowEvent',
+          type: 'bpmn:IntermediateCatchEvent',
           businessObject: businessObject
         });
   
         create.start(event, shape);
       };    
-    }
+    } */
 
 
 
@@ -63,7 +63,7 @@ export default class CustomPaletteProvider {
       // add custom elements to palette
       return {
         ...entries,
-
+/* 
         'custom-separator': {
           group: 'custom',
           separator: true
@@ -77,7 +77,7 @@ export default class CustomPaletteProvider {
             dragStart: createTemporalEvent(),
             click: createTemporalEvent()
           }
-        }, 
+        },  */
       }
     };
 

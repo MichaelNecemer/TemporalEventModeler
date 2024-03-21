@@ -16,7 +16,7 @@ import {
   LABELPREFIX_LOWERBOUNDCONSTRAINT,
 } from "./default_config";
 
-import { getHolder, isTemporalConstraint } from "./helper";
+import { getController, getControllerForTemporalEvent, getDefaultController, getDefaultControllerForConnection, getDefaultControllerForTemporalEvent, isTemporalConstraint } from "./helper";
 
 import {
   generateConstraintLabel,
@@ -30,50 +30,23 @@ class CustomCommandInterceptor extends CommandInterceptor {
   constructor(eventBus, modeling, elementRegistry) {
     super(eventBus);
 
-    // when the label element of a temporal event changes -> need to recreate the tc:label for the constraints
-    /*     this.postExecuted(['element.updateLabel'], ({context}) => {
-      const {element} = context;
-      const {id} = element;
-      console.log("ELEMent updateproperties");
-      console.log(element.businessObject.isTemporalEvent);
-      if(isElementTemporalEvent(element)){
-        console.log("Element is temporal event");
-        // find any constraint where the element is the source
-        const elements = elementRegistry.getAll();
-        console.log(elements);
+    this.postExecuted(["shape.create"], ({ context }) => {
+      const { shape } = context;
+      const {id} = shape;
 
-        elements.forEach(el => {
-          if(isTemporalConstraint(el)){
-            console.log("IS temporal constraint");
-            const source = el.source;
-            console.log(source);
-            console.log(el);
-            console.log(element);
-            if(source === element){
-              // udpate the label of the constraint
-              console.log("updat");
-              const holder = getHolder(source)
-              console.log(holder);
-              modeling.updateProperties(el, {
-                holder: holder
-              })
-              const newLabel = generateLabel(el)
-              modeling.updateProperties(el, {
-                label: newLabel
-              })
-            }
-          }
+      const {parent} = context;
 
-        })
-
-        // update the label 
-        const updatedLabel = 'SLJFE'
-        elementRegistry.get(id)
-    
+      if (is(shape, "bpmn:Event")) {
+          
+        const controller = getDefaultControllerForTemporalEvent(shape, parent);
+  
+        // make each event a temporal event
+        modeling.updateProperties(shape, {
+          isTemporalEvent: true,
+          controller: controller,
+        });
       }
-
-
-    }) */
+    });
 
     // hook into connection creation and assign default values!
     // create the label for the constraint
@@ -82,61 +55,51 @@ class CustomCommandInterceptor extends CommandInterceptor {
 
       const { id } = connection;
 
-      const { type } = connection;
-
       const { source } = context;
 
       const { target } = context;
-
-      const businessObject = getBusinessObject(connection);
 
       const constrType = connection.constraintType;
 
       // only hook into constraints!
       if (constrType) {
-        // get the element in the elementfactory
-
         let label;
         let labelValues;
         let prefix;
 
-        const holder = getHolder(source);
-        console.log("HOLDER");
-        console.log(holder);
+        const controller = getDefaultControllerForConnection(source)
+
+        // update the properties all constraints share
+        modeling.updateProperties(connection, {
+          constraintType: constrType,
+          controller: controller,
+          contingency: DEFAULT_CONTINGENCY,
+          isSatisfiable: true,
+        });
 
         if (constrType === "tc:DurationConstraint") {
           modeling.updateProperties(connection, {
-            constraintType: connection.constraintType,
-            holder: holder,
-            contingency: DEFAULT_CONTINGENCY,
             minDuration: DEFAULT_MIN_DURATION,
             maxDuration: DEFAULT_MAX_DURATION,
-            isSatisfiable: true,
           });
         }
 
         if (constrType === "tc:UpperboundConstraint") {
           modeling.updateProperties(connection, {
-            constraintType: connection.constraintType,
             upperboundDuration: DEFAULT_DURATION,
-            holder: holder,
-            contingency: DEFAULT_CONTINGENCY,
-            isSatisfiable: true,
           });
         }
 
         if (constrType === "tc:LowerboundConstraint") {
           modeling.updateProperties(connection, {
-            constraintType: connection.constraintType,
             lowerboundDuration: DEFAULT_DURATION,
-            holder: holder,
-            contingency: DEFAULT_CONTINGENCY,
-            isSatisfiable: true,
           });
         }
 
         label = generateLabel(connection);
-        modeling.updateProperties(connection, { label: label });
+        modeling.updateProperties(connection, {
+          label: label,
+        });
       }
     });
   }

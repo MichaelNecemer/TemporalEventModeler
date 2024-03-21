@@ -17,7 +17,7 @@ export function isElementTemporalEvent(element) {
 }
 
 export function isAssociationTemporalConstraint(element) {
-  return getBusinessObject(element).constraintType || false;
+  return getBusinessObject(element).constraintType ? true : false;
 }
 
 export function isTemporalConstraint(element) {
@@ -55,17 +55,14 @@ function getContingencyLabel(contingency) {
 export function generateLabel(element) {
   const businessObject = getBusinessObject(element);
 
-  const { holder, contingency } = businessObject;
-
-  console.log("HOLD");
-  console.log(holder);
+  const { controller, contingency } = businessObject;
 
   let values;
   let prefix;
 
   if (businessObject.constraintType === "tc:DurationConstraint") {
     values = [
-      holder,
+      controller,
       businessObject.minDuration,
       businessObject.maxDuration,
       getContingencyLabel(contingency),
@@ -73,14 +70,14 @@ export function generateLabel(element) {
     prefix = LABELPREFIX_DURATIONCONSTRAINT;
   } else if (businessObject.constraintType === "tc:UpperboundConstraint") {
     values = [
-      holder,
+      controller,
       businessObject.upperboundDuration,
       getContingencyLabel(contingency),
     ];
     prefix = LABELPREFIX_UPPERBOUNDCONSTRAINT;
   } else if (businessObject.constraintType === "tc:LowerboundConstraint") {
     values = [
-      holder,
+      controller,
       businessObject.lowerboundDuration,
       getContingencyLabel(contingency),
     ];
@@ -94,23 +91,24 @@ export function getLabel(element) {
   return getBusinessObject(element).label;
 }
 
-export function getHolder(connectionSource) {
-  let businessObjectOfSource = getBusinessObject(connectionSource);  
-  let holder = businessObjectOfSource.$parent;
+export function getDefaultControllerForTemporalEvent(temporalEvent, parent) {
+  const bo = getBusinessObject(temporalEvent);
 
-  if (is(holder, "bpmn:Process")) {
-    // get the lane of the event as the holder if possible
-    if (businessObjectOfSource.lanes[0]) {
-      console.log("LANES");
-      console.log(businessObjectOfSource.lanes);
-      return businessObjectOfSource.lanes[0].name
-        ? businessObjectOfSource.lanes[0].name
-        : businessObjectOfSource.lanes[0].id;
+  if (parent) {
+    const parentBusinessObject = getBusinessObject(parent);
+
+    if(parentBusinessObject){
+      if(parentBusinessObject.name){
+        return parentBusinessObject.name;
+      }
     }
-    // check if the process has a participant -> the name of the pool!
   }
-  // assign the name of the source or the id of the source as the holder
-  return businessObjectOfSource.name
-    ? businessObjectOfSource.name
-    : businessObjectOfSource.id;
+    return bo.name
+    ? bo.name
+    : bo.id;
+}
+
+export function getDefaultControllerForConnection(connectionSource) {
+  let businessObjectOfSource = getBusinessObject(connectionSource);
+  return businessObjectOfSource.controller || '';
 }
